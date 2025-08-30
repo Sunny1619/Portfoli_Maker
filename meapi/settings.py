@@ -44,8 +44,8 @@ if not ALLOWED_HOSTS:
 # Behind Railway's proxy ensure Django knows the original scheme
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# CSRF Configuration - Keep it simple
-CSRF_TRUSTED_ORIGINS = ["*"]
+# Simple CSRF configuration
+CSRF_TRUSTED_ORIGINS = []
 
 
 
