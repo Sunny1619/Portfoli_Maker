@@ -4,10 +4,12 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from portfolio.views import health, RegisterView, api_root
+from portfolio.views import RegisterView, api_root
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
-# Simple health check for Railway - no Django complexity
+# Simple health check for Railway - no Django complexity, no CSRF
+@csrf_exempt
 def simple_health(request):
     return JsonResponse({"status": "ok"})
 
