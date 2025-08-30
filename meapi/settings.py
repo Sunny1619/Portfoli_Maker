@@ -29,7 +29,14 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-secret-key-change-in-production
 DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
 
 # Allow Railway's dynamic domains and custom domains
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",") if os.getenv("ALLOWED_HOSTS") else ["*"]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+
+if not ALLOWED_HOSTS or ALLOWED_HOSTS == [""]:
+    ALLOWED_HOSTS = [
+        ".railway.app",   # allow Railway subdomains
+        "localhost",
+        "127.0.0.1",
+    ]
 
 
 
