@@ -45,8 +45,9 @@ if not ALLOWED_HOSTS:
     else:
         # In production, be secure but Railway-compatible
         ALLOWED_HOSTS = [
-            ".railway.app",      # Railway's standard domains
-            ".up.railway.app",   # Railway's new domain pattern
+            ".railway.app",           # Railway's standard domains
+            ".up.railway.app",        # Railway's new domain pattern
+            "healthcheck.railway.app", # Railway's health check system
             "localhost",
             "127.0.0.1",
         ]

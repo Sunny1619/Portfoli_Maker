@@ -8,7 +8,7 @@ Set these environment variables in your Railway project:
 ```
 DJANGO_SECRET_KEY=generate-a-very-secure-secret-key-here
 DJANGO_DEBUG=False
-ALLOWED_HOSTS=your-app.railway.app
+ALLOWED_HOSTS=your-app.railway.app,healthcheck.railway.app
 ```
 
 **Optional (add when frontend is deployed):**
