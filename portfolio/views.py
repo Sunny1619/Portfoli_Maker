@@ -10,6 +10,10 @@ from .serializers import UserProfileSerializer, SkillSerializer, ProjectSerializ
 from django.db.models import Count
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
+from django.db import transaction
+import logging
+
+logger = logging.getLogger(__name__)
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -39,6 +43,7 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = [AllowAny]  # anyone can register
 
     def post(self, request, *args, **kwargs):
+        try:
             username = request.data.get("username")
             password = request.data.get("password")
             email = request.data.get("email")
@@ -51,15 +56,19 @@ class RegisterView(generics.CreateAPIView):
             if User.objects.filter(username=username).exists():
                 return Response({"error": "Username already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
-            user = User.objects.create_user(username=username, email=email, password=password)
-            if first_name:
-                user.first_name = first_name
-            if last_name:
-                user.last_name = last_name
-            user.save()
-            UserProfile.objects.create(user=user)  # empty profile auto-created
+            with transaction.atomic():
+                user = User.objects.create_user(username=username, email=email, password=password)
+                if first_name:
+                    user.first_name = first_name
+                if last_name:
+                    user.last_name = last_name
+                user.save()
+                UserProfile.objects.create(user=user)  # empty profile auto-created
 
             return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            logger.error(f"Registration error: {str(e)}")
+            return Response({"error": "Registration failed. Please try again."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
 class UserProfileView(generics.RetrieveUpdateAPIView):

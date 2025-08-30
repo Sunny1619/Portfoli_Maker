@@ -14,6 +14,10 @@ from pathlib import Path
 import os
 from datetime import timedelta
 from dotenv import load_dotenv
+import pymysql
+
+# Ensure PyMySQL acts as MySQLdb (avoids requiring mysqlclient binary build)
+pymysql.install_as_MySQLdb()
 
 load_dotenv()
 
@@ -29,14 +33,26 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-secret-key-change-in-production
 DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
 
 # Allow Railway's dynamic domains and custom domains
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+# Parse ALLOWED_HOSTS env var safely (ignore empty segments / whitespace)
+raw_hosts = os.getenv("ALLOWED_HOSTS", "")
+ALLOWED_HOSTS = [h.strip() for h in raw_hosts.split(",") if h.strip()]
 
-if not ALLOWED_HOSTS or ALLOWED_HOSTS == [""]:
-    ALLOWED_HOSTS = [
-        ".railway.app",   # allow Railway subdomains
+# Fallback defaults if nothing provided
+if not ALLOWED_HOSTS:
+    # In DEBUG we can be permissive; in production restrict to known patterns
+    ALLOWED_HOSTS = ["*"] if DEBUG else [
+        ".railway.app",  # allow any Railway subdomain
         "localhost",
         "127.0.0.1",
     ]
+
+# Behind Railway's proxy ensure Django knows the original scheme
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Trust Railway domains for CSRF (needed if you enable any session based views later)
+CSRF_TRUSTED_ORIGINS = [
+    "https://" + host.lstrip('.') for host in ALLOWED_HOSTS if host not in ("*", "localhost", "127.0.0.1") and not host.startswith("http")
+]
 
 
 
@@ -60,6 +76,8 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    # WhiteNoise for efficient static file serving in production
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -102,7 +120,13 @@ DATABASES = {
         "PORT": os.getenv("MYSQL_PORT", os.getenv("DB_PORT", "3306")),
         "OPTIONS": {
             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+            "charset": "utf8mb4",
+            "connect_timeout": 20,
+            "read_timeout": 30,
+            "write_timeout": 30,
         },
+        "CONN_MAX_AGE": 300,  # 5 minutes connection pooling
+        "CONN_HEALTH_CHECKS": True,
     }
 }
 
@@ -143,6 +167,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Media files
 MEDIA_URL = '/media/'
@@ -170,11 +195,74 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOW_ALL_ORIGINS = False
+
+# Frontend URLs - Update these with your actual frontend URLs
+FRONTEND_URLS = os.getenv("FRONTEND_URLS", "").split(",")
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
+
+# Add production frontend URLs if provided
+if FRONTEND_URLS and FRONTEND_URLS != [""]:
+    CORS_ALLOWED_ORIGINS.extend([url.strip() for url in FRONTEND_URLS if url.strip()])
+
+# Production Security Settings
+if not DEBUG:
+    # Security Headers
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    
+    # SSL Settings
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    
+    # Additional security
+    SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 TIME_ZONE = "Asia/Kolkata"
 USE_TZ = True
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'WARNING' if not DEBUG else 'DEBUG',
+            'propagate': False,
+        },
+    },
+}

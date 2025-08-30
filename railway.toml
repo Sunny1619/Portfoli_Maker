@@ -6,6 +6,7 @@ builder = "NIXPACKS"
 
 [deploy]
 healthcheckPath = "/health/"
+healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
@@ -14,7 +15,8 @@ NIXPACKS_PYTHON_VERSION = "3.11"
 
 [deploy.env]
 # Railway will automatically set DATABASE_URL for MySQL
-# You only need to add these custom environment variables:
-# DJANGO_SECRET_KEY = "your-secret-key"
+# Required environment variables to set in Railway dashboard:
+# DJANGO_SECRET_KEY = "your-very-secret-key-here"
 # DJANGO_DEBUG = "False"  
-# ALLOWED_HOSTS = "your-app.railway.app"
+# ALLOWED_HOSTS = "your-app.railway.app,custom-domain.com"
+# FRONTEND_URLS = "https://your-frontend.vercel.app"
