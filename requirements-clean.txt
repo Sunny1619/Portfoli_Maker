@@ -1,0 +1,23 @@
+# Django Core
+Django==5.2.4
+djangorestframework==3.16.0
+django-cors-headers==4.7.0
+
+# Database
+mysql-connector-python==8.3.0
+
+# JWT Authentication
+PyJWT==2.8.0
+djangorestframework-simplejwt==5.3.0
+
+# Production Server
+gunicorn==23.0.0
+
+# Utilities
+python-dotenv==1.0.1
+
+# Django dependencies
+asgiref==3.9.1
+sqlparse==0.5.3
+pytz==2024.2
+tzdata==2025.2
