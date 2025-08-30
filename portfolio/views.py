@@ -11,14 +11,27 @@ from django.db.models import Count
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 from django.db import transaction
+from django.utils import timezone
 import logging
 
 logger = logging.getLogger(__name__)
 
-@api_view(['GET'])
+@api_view(['GET', 'POST', 'HEAD'])
 @permission_classes([AllowAny])
 def health(request):
-    return Response({"status": "alive"}, status=200)
+    """
+    Health check endpoint for Railway and other monitoring services.
+    Supports GET, POST, and HEAD methods for maximum compatibility.
+    """
+    try:
+        return Response({
+            "status": "healthy",
+            "service": "Portfolio API",
+            "timestamp": timezone.now().isoformat()
+        }, status=200)
+    except Exception as e:
+        logger.error(f"Health check error: {str(e)}")
+        return Response({"status": "error", "message": str(e)}, status=500)
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
