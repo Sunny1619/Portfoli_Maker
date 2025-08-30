@@ -82,32 +82,20 @@ WSGI_APPLICATION = 'meapi.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-import dj_database_url
-
-# Support for DATABASE_URL (Railway's preferred method)
-if os.getenv("DATABASE_URL"):
-    DATABASES = {
-        "default": dj_database_url.config(
-            default=os.getenv("DATABASE_URL"),
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
+# Use Railway's individual MySQL environment variables (available during build)
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.getenv("MYSQL_DATABASE", os.getenv("DB_NAME", "railway")),
+        "USER": os.getenv("MYSQL_USER", os.getenv("DB_USER", "root")),
+        "PASSWORD": os.getenv("MYSQL_PASSWORD", os.getenv("MYSQL_ROOT_PASSWORD", os.getenv("DB_PASSWORD"))),
+        "HOST": os.getenv("MYSQL_HOST", os.getenv("DB_HOST", "127.0.0.1")),
+        "PORT": os.getenv("MYSQL_PORT", os.getenv("DB_PORT", "3306")),
+        "OPTIONS": {
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
-else:
-    # Fallback to individual environment variables
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.mysql",
-            "NAME": os.getenv("MYSQL_DATABASE", os.getenv("DB_NAME")),
-            "USER": os.getenv("MYSQL_USER", os.getenv("DB_USER", "root")),
-            "PASSWORD": os.getenv("MYSQL_ROOT_PASSWORD", os.getenv("DB_PASSWORD")),
-            "HOST": os.getenv("MYSQL_HOST", os.getenv("DB_HOST", "127.0.0.1")),
-            "PORT": os.getenv("MYSQL_PORT", os.getenv("DB_PORT", "3306")),
-            "OPTIONS": {
-                "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
-            },
-        }
-    }
+}
 
 
 # Password validation

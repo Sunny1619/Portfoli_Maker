@@ -6,7 +6,6 @@ django-cors-headers==4.7.0
 # Database
 mysql-connector-python==8.3.0
 PyMySQL==1.1.0
-dj-database-url==2.3.0
 
 # JWT Authentication
 PyJWT==2.8.0
