@@ -9,6 +9,10 @@ Set these environment variables in your Railway project:
 DJANGO_SECRET_KEY=generate-a-very-secure-secret-key-here
 DJANGO_DEBUG=False
 ALLOWED_HOSTS=your-app.railway.app
+```
+
+**Optional (add when frontend is deployed):**
+```
 FRONTEND_URLS=https://your-frontend-domain.com
 ```
 

@@ -39,12 +39,17 @@ ALLOWED_HOSTS = [h.strip() for h in raw_hosts.split(",") if h.strip()]
 
 # Fallback defaults if nothing provided
 if not ALLOWED_HOSTS:
-    # In DEBUG we can be permissive; in production restrict to known patterns
-    ALLOWED_HOSTS = ["*"] if DEBUG else [
-        ".railway.app",  # allow any Railway subdomain
-        "localhost",
-        "127.0.0.1",
-    ]
+    if DEBUG:
+        # In development, be permissive
+        ALLOWED_HOSTS = ["*"]
+    else:
+        # In production, be secure but Railway-compatible
+        ALLOWED_HOSTS = [
+            ".railway.app",      # Railway's standard domains
+            ".up.railway.app",   # Railway's new domain pattern
+            "localhost",
+            "127.0.0.1",
+        ]
 
 # Behind Railway's proxy ensure Django knows the original scheme
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -196,16 +201,16 @@ SIMPLE_JWT = {
 
 CORS_ALLOW_ALL_ORIGINS = False
 
-# Frontend URLs - Update these with your actual frontend URLs
+# Frontend URLs - Add these when your frontend is deployed
 FRONTEND_URLS = os.getenv("FRONTEND_URLS", "").split(",")
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    "http://localhost:3000",     # React development
     "http://127.0.0.1:3000",
-    "http://localhost:5173",
+    "http://localhost:5173",     # Vite development
     "http://127.0.0.1:5173",
 ]
 
-# Add production frontend URLs if provided
+# Add production frontend URLs when available
 if FRONTEND_URLS and FRONTEND_URLS != [""]:
     CORS_ALLOWED_ORIGINS.extend([url.strip() for url in FRONTEND_URLS if url.strip()])
 
