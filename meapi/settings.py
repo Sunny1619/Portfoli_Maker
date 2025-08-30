@@ -44,11 +44,8 @@ if not ALLOWED_HOSTS:
 # Behind Railway's proxy ensure Django knows the original scheme
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# TEMPORARY: Disable CSRF for Railway debugging
-CSRF_TRUSTED_ORIGINS = []
-# Disable CSRF entirely for now
-CSRF_COOKIE_SECURE = False
-CSRF_USE_SESSIONS = False
+# CSRF Configuration - Keep it simple
+CSRF_TRUSTED_ORIGINS = ["*"]
 
 
 
@@ -76,7 +73,7 @@ MIDDLEWARE = [
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    # "django.middleware.csrf.CsrfViewMiddleware",  # TEMPORARILY DISABLED for Railway debugging
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
