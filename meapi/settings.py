@@ -37,67 +37,15 @@ DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
 raw_hosts = os.getenv("ALLOWED_HOSTS", "")
 ALLOWED_HOSTS = [h.strip() for h in raw_hosts.split(",") if h.strip()]
 
-# CRITICAL: Always include Railway health check domain
-# This is a MUST for Railway deployment regardless of other settings
-railway_required_hosts = [
-    "healthcheck.railway.app",  # CRITICAL for Railway health checks
-    ".railway.app",             # Railway's standard domains
-    ".up.railway.app",          # Railway's new domain pattern
-]
-
-# Ensure Railway hosts are always included
-for host in railway_required_hosts:
-    if host not in ALLOWED_HOSTS:
-        ALLOWED_HOSTS.append(host)
-
-# Fallback defaults if nothing provided
-if not ALLOWED_HOSTS or ALLOWED_HOSTS == railway_required_hosts:
-    if DEBUG:
-        # In development, be permissive
-        ALLOWED_HOSTS = ["*"]
-    else:
-        # In production, be secure but Railway-compatible
-        ALLOWED_HOSTS = [
-            "healthcheck.railway.app", # CRITICAL for Railway health checks
-            ".railway.app",           # Railway's standard domains
-            ".up.railway.app",        # Railway's new domain pattern
-            "localhost",
-            "127.0.0.1",
-        ]
+# TEMPORARY: Allow all hosts for Railway debugging
+if not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ["*"]
 
 # Behind Railway's proxy ensure Django knows the original scheme
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# CSRF Configuration - Railway-compatible
-CSRF_TRUSTED_ORIGINS = []
-
-# Build CSRF trusted origins safely
-for host in ALLOWED_HOSTS:
-    if host not in ("*", "localhost", "127.0.0.1") and not host.startswith("http"):
-        # Handle Railway domains properly
-        if host.startswith('.'):
-            # For wildcard domains like .railway.app, add specific patterns
-            if host == ".railway.app":
-                CSRF_TRUSTED_ORIGINS.extend([
-                    "https://*.railway.app",
-                    "http://*.railway.app"  # For development
-                ])
-            elif host == ".up.railway.app":
-                CSRF_TRUSTED_ORIGINS.extend([
-                    "https://*.up.railway.app",
-                    "http://*.up.railway.app"  # For development
-                ])
-        else:
-            # For specific domains, add both http and https
-            CSRF_TRUSTED_ORIGINS.extend([
-                f"https://{host}",
-                f"http://{host}"  # For development and health checks
-            ])
-
-# Add environment-based CSRF origins if provided
-csrf_origins_env = os.getenv("CSRF_TRUSTED_ORIGINS", "")
-if csrf_origins_env:
-    CSRF_TRUSTED_ORIGINS.extend([origin.strip() for origin in csrf_origins_env.split(",") if origin.strip()])
+# TEMPORARY: Allow all CSRF origins for Railway debugging
+CSRF_TRUSTED_ORIGINS = ["*"]
 
 
 

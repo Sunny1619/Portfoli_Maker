@@ -17,49 +17,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 @csrf_exempt
-@api_view(['GET', 'POST', 'HEAD', 'OPTIONS'])
+@api_view(['GET'])
 @permission_classes([AllowAny])
 def health(request):
-    """
-    Health check endpoint for Railway and other monitoring services.
-    Supports GET, POST, HEAD, and OPTIONS methods for maximum compatibility.
-    CSRF exempt to avoid issues with health check systems.
-    Works even if database is not ready.
-    """
-    try:
-        # Basic health check that doesn't require database
-        logger.info(f"Health check request: {request.method} from {request.META.get('HTTP_HOST', 'unknown')}")
-        
-        # Test database connection (optional)
-        db_status = "unknown"
-        try:
-            from django.db import connection
-            connection.ensure_connection()
-            db_status = "connected"
-        except Exception as db_e:
-            logger.warning(f"Database not ready: {str(db_e)}")
-            db_status = "not_ready"
-        
-        response_data = {
-            "status": "healthy",
-            "service": "Portfolio API",
-            "timestamp": timezone.now().isoformat(),
-            "method": request.method,
-            "database": db_status,
-            "host": request.META.get('HTTP_HOST', 'unknown')
-        }
-        
-        # Return 200 even if database isn't ready (Railway needs the app to be "healthy")
-        return Response(response_data, status=200)
-        
-    except Exception as e:
-        logger.error(f"Health check error: {str(e)}")
-        # Still return 200 for Railway health checks, but indicate error
-        return Response({
-            "status": "degraded", 
-            "error": str(e),
-            "timestamp": timezone.now().isoformat()
-        }, status=200)
+    """Simple health check for Railway"""
+    return Response({"status": "healthy"}, status=200)
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
