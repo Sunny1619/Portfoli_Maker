@@ -8,9 +8,29 @@ from rest_framework.permissions import AllowAny
 from rest_framework import generics, permissions
 from .serializers import UserProfileSerializer, SkillSerializer, ProjectSerializer
 from django.db.models import Count
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
 def health(request):
     return JsonResponse({"status": "alive"}, status=200)
+
+@csrf_exempt
+def api_root(request):
+    return JsonResponse({
+        "message": "Portfolio API is running",
+        "status": "active",
+        "endpoints": {
+            "health": "/health/",
+            "profile": "/profile/",
+            "skills": "/skills/",
+            "projects": "/projects/",
+            "auth": {
+                "register": "/auth/register/",
+                "login": "/auth/login/",
+                "refresh": "/auth/refresh/"
+            }
+        }
+    }, status=200)
 
 class RegisterView(generics.CreateAPIView):
     permission_classes = [AllowAny]  # anyone can register

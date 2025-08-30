@@ -4,10 +4,13 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from portfolio.views import health, RegisterView
+from portfolio.views import health, RegisterView, api_root
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+
+    # API Root
+    path("", api_root, name="api_root"),
 
     # Health check
     path("health/", health, name="health"),
