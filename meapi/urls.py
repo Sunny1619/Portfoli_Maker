@@ -7,9 +7,6 @@ from rest_framework_simplejwt.views import (
 from portfolio.views import RegisterView, api_root
 from django.http import JsonResponse
 
-# Simplest possible health check
-def health(request):
-    return JsonResponse({"status": "ok"})
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -17,8 +14,6 @@ urlpatterns = [
     # API Root
     path("", api_root, name="api_root"),
 
-    # Simple health check
-    path("health/", health, name="health"),
 
     # JWT Auth
     path("auth/register/", RegisterView.as_view(), name="register"),

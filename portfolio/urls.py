@@ -1,10 +1,11 @@
 from django.urls import path
 from .views import (
     UserProfileView, UserSkillsView, UserProjectsView, UserTopSkillsView,
-    WorkExperienceView, EducationView, SocialLinksView
+    WorkExperienceView, EducationView, SocialLinksView, health
 )
 
 urlpatterns = [
+    path("health/", health, name="health"),
     path("profile/", UserProfileView.as_view(), name="profile"),
     path("skills/", UserSkillsView.as_view(), name="skills"),
     path("skills/top/", UserTopSkillsView.as_view(), name="top-skills"),
