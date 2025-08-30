@@ -9,14 +9,17 @@ from rest_framework import generics, permissions
 from .serializers import UserProfileSerializer, SkillSerializer, ProjectSerializer
 from django.db.models import Count
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view, permission_classes
 
-@csrf_exempt
+@api_view(['GET'])
+@permission_classes([AllowAny])
 def health(request):
-    return JsonResponse({"status": "alive"}, status=200)
+    return Response({"status": "alive"}, status=200)
 
-@csrf_exempt
+@api_view(['GET'])
+@permission_classes([AllowAny])
 def api_root(request):
-    return JsonResponse({
+    return Response({
         "message": "Portfolio API is running",
         "status": "active",
         "endpoints": {
