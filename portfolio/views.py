@@ -16,19 +16,27 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-@api_view(['GET', 'POST', 'HEAD'])
+@csrf_exempt
+@api_view(['GET', 'POST', 'HEAD', 'OPTIONS'])
 @permission_classes([AllowAny])
 def health(request):
     """
     Health check endpoint for Railway and other monitoring services.
-    Supports GET, POST, and HEAD methods for maximum compatibility.
+    Supports GET, POST, HEAD, and OPTIONS methods for maximum compatibility.
+    CSRF exempt to avoid issues with health check systems.
     """
     try:
-        return Response({
+        # Log the request for debugging
+        logger.info(f"Health check request: {request.method} from {request.META.get('HTTP_HOST', 'unknown')}")
+        
+        response_data = {
             "status": "healthy",
             "service": "Portfolio API",
-            "timestamp": timezone.now().isoformat()
-        }, status=200)
+            "timestamp": timezone.now().isoformat(),
+            "method": request.method
+        }
+        
+        return Response(response_data, status=200)
     except Exception as e:
         logger.error(f"Health check error: {str(e)}")
         return Response({"status": "error", "message": str(e)}, status=500)

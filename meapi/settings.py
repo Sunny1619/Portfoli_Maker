@@ -55,10 +55,36 @@ if not ALLOWED_HOSTS:
 # Behind Railway's proxy ensure Django knows the original scheme
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# Trust Railway domains for CSRF (needed if you enable any session based views later)
-CSRF_TRUSTED_ORIGINS = [
-    "https://" + host.lstrip('.') for host in ALLOWED_HOSTS if host not in ("*", "localhost", "127.0.0.1") and not host.startswith("http")
-]
+# CSRF Configuration - Railway-compatible
+CSRF_TRUSTED_ORIGINS = []
+
+# Build CSRF trusted origins safely
+for host in ALLOWED_HOSTS:
+    if host not in ("*", "localhost", "127.0.0.1") and not host.startswith("http"):
+        # Handle Railway domains properly
+        if host.startswith('.'):
+            # For wildcard domains like .railway.app, add specific patterns
+            if host == ".railway.app":
+                CSRF_TRUSTED_ORIGINS.extend([
+                    "https://*.railway.app",
+                    "http://*.railway.app"  # For development
+                ])
+            elif host == ".up.railway.app":
+                CSRF_TRUSTED_ORIGINS.extend([
+                    "https://*.up.railway.app",
+                    "http://*.up.railway.app"  # For development
+                ])
+        else:
+            # For specific domains, add both http and https
+            CSRF_TRUSTED_ORIGINS.extend([
+                f"https://{host}",
+                f"http://{host}"  # For development and health checks
+            ])
+
+# Add environment-based CSRF origins if provided
+csrf_origins_env = os.getenv("CSRF_TRUSTED_ORIGINS", "")
+if csrf_origins_env:
+    CSRF_TRUSTED_ORIGINS.extend([origin.strip() for origin in csrf_origins_env.split(",") if origin.strip()])
 
 
 
@@ -232,6 +258,14 @@ if not DEBUG:
     
     # Additional security
     SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+    
+    # CSRF settings for production
+    CSRF_COOKIE_HTTPONLY = True
+    CSRF_USE_SESSIONS = False
+else:
+    # Development CSRF settings - more permissive
+    CSRF_COOKIE_SECURE = False
+    CSRF_COOKIE_HTTPONLY = False
 TIME_ZONE = "Asia/Kolkata"
 USE_TZ = True
 
