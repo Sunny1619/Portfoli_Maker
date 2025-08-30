@@ -37,17 +37,30 @@ DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
 raw_hosts = os.getenv("ALLOWED_HOSTS", "")
 ALLOWED_HOSTS = [h.strip() for h in raw_hosts.split(",") if h.strip()]
 
+# CRITICAL: Always include Railway health check domain
+# This is a MUST for Railway deployment regardless of other settings
+railway_required_hosts = [
+    "healthcheck.railway.app",  # CRITICAL for Railway health checks
+    ".railway.app",             # Railway's standard domains
+    ".up.railway.app",          # Railway's new domain pattern
+]
+
+# Ensure Railway hosts are always included
+for host in railway_required_hosts:
+    if host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(host)
+
 # Fallback defaults if nothing provided
-if not ALLOWED_HOSTS:
+if not ALLOWED_HOSTS or ALLOWED_HOSTS == railway_required_hosts:
     if DEBUG:
         # In development, be permissive
         ALLOWED_HOSTS = ["*"]
     else:
         # In production, be secure but Railway-compatible
         ALLOWED_HOSTS = [
+            "healthcheck.railway.app", # CRITICAL for Railway health checks
             ".railway.app",           # Railway's standard domains
             ".up.railway.app",        # Railway's new domain pattern
-            "healthcheck.railway.app", # Railway's health check system
             "localhost",
             "127.0.0.1",
         ]
