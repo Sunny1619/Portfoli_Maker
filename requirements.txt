@@ -16,6 +16,7 @@ gunicorn==23.0.0
 
 # Utilities
 python-dotenv==1.0.1
+setuptools==75.6.0
 
 # Django dependencies
 asgiref==3.9.1
