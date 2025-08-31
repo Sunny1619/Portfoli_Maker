@@ -418,7 +418,7 @@ function ProfilePage() {
                         <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#212529', margin: '0 0 8px' }}>
                           {project.title}
                         </h4>
-                        <p style={{ fontSize: '14px', color: '#6c757d', lineHeight: '1.5', margin: '0 0 12px' }}>
+                        <p style={{ fontSize: '14px', color: '#6c757d', lineHeight: '1.5', margin: '0 0 12px', whiteSpace: 'pre-wrap' }}>
                           {project.description}
                         </p>
                         {project.links && (() => {

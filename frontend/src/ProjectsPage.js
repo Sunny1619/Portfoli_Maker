@@ -781,7 +781,8 @@ function ProjectsPage() {
                     fontSize: '16px',
                     color: '#495057',
                     lineHeight: '1.5',
-                    marginBottom: '20px'
+                    marginBottom: '20px',
+                    whiteSpace: 'pre-wrap'
                   }}>
                     {project.description}
                   </p>
