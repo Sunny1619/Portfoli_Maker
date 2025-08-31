@@ -373,7 +373,7 @@ function ProfilePage() {
                 <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#212529', marginBottom: '16px' }}>
                   Work Experience
                 </h3>
-                <p style={{ fontSize: '14px', color: '#6c757d', lineHeight: '1.6', margin: '0' }}>
+                <p style={{ fontSize: '14px', color: '#6c757d', lineHeight: '1.6', margin: '0', whiteSpace: 'pre-wrap' }}>
                   {profileData.work || 'No work experience added yet.'}
                 </p>
               </div>
@@ -388,7 +388,7 @@ function ProfilePage() {
                 <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#212529', marginBottom: '16px' }}>
                   Education
                 </h3>
-                <p style={{ fontSize: '14px', color: '#6c757d', lineHeight: '1.6', margin: '0' }}>
+                <p style={{ fontSize: '14px', color: '#6c757d', lineHeight: '1.6', margin: '0', whiteSpace: 'pre-wrap' }}>
                   {profileData.education || 'No education information added yet.'}
                 </p>
               </div>
