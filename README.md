@@ -4,8 +4,8 @@ A full-stack web application that allows users to create, manage, and showcase t
 
 ## 🌐 Live Demo
 
-- **Frontend**: [https://portfoli-maker-giv9o9erl-raxpirate-2741s-projects.vercel.app](https://portfoli-maker-giv9o9erl-raxpirate-2741s-projects.vercel.app)
-- **Backend API**: [https://me-api-production-ca37.up.railway.app](https://me-api-production-ca37.up.railway.app)
+- **Frontend**: https://portfoli-maker.vercel.app/
+- **Backend API**: https://portfolimaker-production.up.railway.app/
 
 ## 🏗️ Architecture
 
