@@ -402,7 +402,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Author
 
-**Sunny Rajpurohit**
+**Sunny Kumar Pandit**
 - GitHub: [@Sunny1619](https://github.com/Sunny1619)
 - LinkedIn: [Connect with me](https://linkedin.com/in/your-profile)
 
