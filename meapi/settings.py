@@ -37,9 +37,23 @@ DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
 raw_hosts = os.getenv("ALLOWED_HOSTS", "")
 ALLOWED_HOSTS = [h.strip() for h in raw_hosts.split(",") if h.strip()]
 
-# TEMPORARY: Allow all hosts for Railway debugging
+# Add your specific Railway domain
+RAILWAY_HOSTS = [
+    "portfolimaker-production.up.railway.app",
+    "healthcheck.railway.app",
+    "localhost",
+    "127.0.0.1"
+]
+
+# TEMPORARY: Allow all hosts for Railway debugging, or use specific hosts
 if not ALLOWED_HOSTS:
-    ALLOWED_HOSTS = ["*"]
+    ALLOWED_HOSTS = ["*"]  # Allow all for debugging
+    # ALLOWED_HOSTS = RAILWAY_HOSTS  # Use this for production
+
+# Always ensure Railway domains are included
+for host in RAILWAY_HOSTS:
+    if host not in ALLOWED_HOSTS and "*" not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(host)
 
 # Always allow Railway healthcheck domain
 if "healthcheck.railway.app" not in ALLOWED_HOSTS and "*" not in ALLOWED_HOSTS:
@@ -200,7 +214,7 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
 }
 
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True  # Temporarily allow all origins for testing
 
 # Frontend URLs - Add these when your frontend is deployed
 FRONTEND_URLS = os.getenv("FRONTEND_URLS", "").split(",")
@@ -209,6 +223,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:5173",     # Vite development
     "http://127.0.0.1:5173",
+    "https://portfolimaker-production.up.railway.app",  # Your Railway domain
 ]
 
 # Add production frontend URLs when available
@@ -225,8 +240,8 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     
-    # SSL Settings
-    SECURE_SSL_REDIRECT = True
+    # SSL Settings - Temporarily disabled for Railway testing
+    # SECURE_SSL_REDIRECT = True  # Disabled for testing
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     
