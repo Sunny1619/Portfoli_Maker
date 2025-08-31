@@ -133,12 +133,12 @@ DATABASES = {
         "OPTIONS": {
             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
             "charset": "utf8mb4",
-            "connect_timeout": 60,  # Increased timeout
+            "connect_timeout": 60,
             "read_timeout": 60,
             "write_timeout": 60,
         },
-        "CONN_MAX_AGE": 300,  # 5 minutes connection pooling
-        "CONN_HEALTH_CHECKS": True,
+        "CONN_MAX_AGE": 0,  # Disable connection pooling to fix threading issues
+        "CONN_HEALTH_CHECKS": False,  # Disable health checks that can cause threading issues
         "TEST": {
             "CHARSET": None,
             "COLLATION": None,
