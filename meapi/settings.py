@@ -118,14 +118,22 @@ DATABASES = {
         "OPTIONS": {
             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
             "charset": "utf8mb4",
-            "connect_timeout": 20,
-            "read_timeout": 30,
-            "write_timeout": 30,
+            "connect_timeout": 60,  # Increased timeout
+            "read_timeout": 60,
+            "write_timeout": 60,
         },
         "CONN_MAX_AGE": 300,  # 5 minutes connection pooling
         "CONN_HEALTH_CHECKS": True,
+        "TEST": {
+            "CHARSET": None,
+            "COLLATION": None,
+        },
     }
 }
+
+# Database connection retry settings
+DATABASE_CONNECTION_RETRY_DELAY = 5
+DATABASE_CONNECTION_MAX_RETRIES = 3
 
 
 # Password validation

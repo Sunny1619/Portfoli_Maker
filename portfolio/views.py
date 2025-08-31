@@ -21,7 +21,20 @@ logger = logging.getLogger(__name__)
 @permission_classes([AllowAny])
 def health(request):
     """Simple health check for Railway"""
-    return Response({"status": "healthy"}, status=200)
+    try:
+        # Simple health check without database access
+        return JsonResponse({
+            "status": "healthy",
+            "service": "portfolio-api",
+            "timestamp": timezone.now().isoformat()
+        }, status=200)
+    except Exception as e:
+        logger.error(f"Health check failed: {str(e)}")
+        return JsonResponse({
+            "status": "unhealthy",
+            "error": str(e),
+            "timestamp": timezone.now().isoformat()
+        }, status=503)
 
 @api_view(['GET'])
 @permission_classes([AllowAny])

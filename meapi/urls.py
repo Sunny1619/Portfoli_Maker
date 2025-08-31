@@ -6,14 +6,23 @@ from rest_framework_simplejwt.views import (
 )
 from portfolio.views import RegisterView, api_root
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+
+@csrf_exempt
+def simple_health(request):
+    """Ultra-simple health check for Railway"""
+    return JsonResponse({"status": "healthy", "service": "me-api"})
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
 
+    # Simple health check (for Railway)
+    path("health/", simple_health, name="simple_health"),
+
     # API Root
     path("", api_root, name="api_root"),
-
 
     # JWT Auth
     path("auth/register/", RegisterView.as_view(), name="register"),
