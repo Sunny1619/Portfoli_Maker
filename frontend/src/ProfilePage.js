@@ -421,18 +421,51 @@ function ProfilePage() {
                         <p style={{ fontSize: '14px', color: '#6c757d', lineHeight: '1.5', margin: '0 0 12px' }}>
                           {project.description}
                         </p>
-                        {project.links && (
-                          <a href={project.links} target="_blank" rel="noopener noreferrer" style={{
-                            fontSize: '13px',
-                            color: '#212529',
-                            textDecoration: 'none',
-                            fontWeight: '500',
-                            display: 'block',
-                            marginBottom: '8px'
-                          }}>
-                            🔗 View Project
-                          </a>
-                        )}
+                        {project.links && (() => {
+                          try {
+                            const parsedLinks = JSON.parse(project.links);
+                            if (Array.isArray(parsedLinks) && parsedLinks.length > 0) {
+                              return (
+                                <div style={{ marginBottom: '8px' }}>
+                                  {parsedLinks.map((link, linkIndex) => (
+                                    <a 
+                                      key={linkIndex}
+                                      href={link.url} 
+                                      target="_blank" 
+                                      rel="noopener noreferrer" 
+                                      style={{
+                                        fontSize: '13px',
+                                        color: '#212529',
+                                        textDecoration: 'none',
+                                        fontWeight: '500',
+                                        display: 'inline-block',
+                                        marginRight: '12px',
+                                        marginBottom: '4px'
+                                      }}
+                                    >
+                                      🔗 {link.type}
+                                    </a>
+                                  ))}
+                                </div>
+                              );
+                            }
+                          } catch (e) {
+                            // If JSON parsing fails, treat as direct URL (backwards compatibility)
+                            return (
+                              <a href={project.links} target="_blank" rel="noopener noreferrer" style={{
+                                fontSize: '13px',
+                                color: '#212529',
+                                textDecoration: 'none',
+                                fontWeight: '500',
+                                display: 'block',
+                                marginBottom: '8px'
+                              }}>
+                                🔗 View Project
+                              </a>
+                            );
+                          }
+                          return null;
+                        })()}
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                           {project.skills?.map((skill, skillIndex) => (
                             <span key={skillIndex} style={{
