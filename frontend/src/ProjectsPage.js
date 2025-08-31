@@ -89,6 +89,7 @@ function ProjectsPage() {
   const [selectedSkillFilter, setSelectedSkillFilter] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isAddingProject, setIsAddingProject] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [editingProject, setEditingProject] = useState(null);
 
   // Get all unique skills from all projects for filter dropdown
@@ -148,12 +149,12 @@ function ProjectsPage() {
     }
   }, [allProjects, selectedSkillFilter]);
 
-  // Available skills for selection
-  const availableSkills = [
-    'React', 'JavaScript', 'Node.js', 'Python', 'MongoDB', 'Express', 
-    'Firebase', 'CSS3', 'HTML5', 'UI/UX Design', 'API Integration', 
-    'Chart.js', 'TypeScript', 'Vue.js', 'Angular', 'PostgreSQL', 'MySQL'
-  ];
+  // Available skills for selection (commented out - not used yet)
+  // const availableSkills = [
+  //   'React', 'JavaScript', 'Node.js', 'Python', 'MongoDB', 'Express', 
+  //   'Firebase', 'CSS3', 'HTML5', 'UI/UX Design', 'API Integration', 
+  //   'Chart.js', 'TypeScript', 'Vue.js', 'Angular', 'PostgreSQL', 'MySQL'
+  // ];
 
   const [newProject, setNewProject] = useState({
     title: '',
