@@ -239,7 +239,7 @@ function ProjectsPage() {
     // Convert skills array from strings to objects expected by backend
     const skillsData = newProject.skills.map(skillName => ({
       name: skillName,
-      level: 'Intermediate' // Default level, can be made configurable later
+      level: 'Expert' // Skills added to projects are set to Expert level
     }));
     
     const projectToSave = {
